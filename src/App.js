@@ -1,24 +1,33 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import ShowList from './components/ShowList';
+import ShowSummary from './components/ShowSummary';
 import './App.css';
+const App = () => {
+  const [shows, setShows] = useState([]);
+  const [selectedShow,setSelectedShow] = useState(null);
 
-function App() {
+  const handleShowClick = (showId) =>{
+     const show=shows.find((s)=>s.id===showId);
+     setSelectedShow(show);
+  }
+
+  useEffect(() => {
+    fetch('https://api.tvmaze.com/search/shows?q=all') 
+      .then(response => response.json())
+      .then(data => setShows(data));
+      console.log(shows);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <div className="main-app">
+    {selectedShow ? (
+      <ShowSummary show={selectedShow} />
+    ) : (
+      <div className="main">
+      <ShowList shows={shows} onShowClick={handleShowClick} />
+   </div>
+    )}
+  </div>
   );
 }
 
